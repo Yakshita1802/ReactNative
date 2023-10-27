@@ -1,33 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import firebaseApp from '../firebaseConfig';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState();
-  const navigation = useNavigation(); // Initialize the navigation hook
+  const [password, setPassword] = useState('');
+  const [userData, setUserData] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (userData) {
+      navigation.navigate('Wallet', { userData });
+    }
+  }, [userData, navigation]);
 
   const handleLogin = async () => {
     try {
       const auth = getAuth(firebaseApp);
-      await signInWithEmailAndPassword(auth, email, password);
+      const emailToLowerCase = email.toLowerCase(); // Convert email to lowercase
+      await signInWithEmailAndPassword(auth, emailToLowerCase, password);
 
-      // Check if the user is already signed up, and the login is successful
-      Alert.alert('Success', 'You have successfully logged in.');
-      
-      // Navigate to the Wallet screen
-      navigation.navigate('Wallet'); // Make sure 'Wallet' matches the name of your Wallet screen
-    } catch (error) {
-      if (error.code === 'auth/user-not-found') {
-        // If the user is not signed up, display an alert
+      console.log('Attempting to log in with email:', emailToLowerCase);
+
+      const db = getFirestore(firebaseApp);
+      const usersCollection = collection(db, 'users');
+      const userQuery = query(usersCollection, where('email', '==', emailToLowerCase));
+      const querySnapshot = await getDocs(userQuery);
+
+      if (querySnapshot.size === 0) {
+        console.log('No user found in Firestore');
         Alert.alert('Error', 'User does not exist. Please sign up first.');
       } else {
-        console.error(error.message);
-        // For other error cases, you can display a general error message
-        Alert.alert('Error', 'An error occurred during login.');
+        console.log('User data found:', querySnapshot.docs[0].data());
+        querySnapshot.forEach((doc) => {
+          setUserData(doc.data());
+        });
       }
+    } catch (error) {
+      console.error(error.message);
+      Alert.alert('Error', 'An error occurred during login.');
     }
   }
 

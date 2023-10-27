@@ -14,24 +14,23 @@ export default function SignupScreen({ navigation }) {
     try {
       const auth = getAuth();
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
 
+      const emailToLowerCase = email.toLowerCase(); // Convert email to lowercase
       const userData = {
-        email: user.email,
+        email: emailToLowerCase, // Store the lowercase email
         // Add more user properties as needed
       };
 
       const db = getFirestore();
       const usersCollection = collection(db, 'users');
-      await setDoc(doc(usersCollection, user.uid), userData);
+      await setDoc(doc(usersCollection, userCredential.user.uid), userData);
 
       // After successful signup, navigate to the login screen
-      navigation.navigate('Login'); // Make sure 'Login' matches the name of your login screen
-
+      navigation.navigate('Login');
     } catch (error) {
       console.error(error.message);
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -57,6 +56,7 @@ export default function SignupScreen({ navigation }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

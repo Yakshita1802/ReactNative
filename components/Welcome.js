@@ -4,7 +4,7 @@ import { View, Text, Button, StyleSheet, ImageBackground } from 'react-native';
 export default function WelcomeScreen({ navigation }) {
   return (
     <ImageBackground
-      source={require('../assets/photo-smooth-gradient-background-square-gradient-2-colors-from-top-bottom-gradient-colorful_873925-56291.jpg')}
+      source={require('../assets/cashback-wallet-icon-concept-with-smartphone-banknotes-coins-credit-card-finance-saving-online-payment-investment-money-transfer-purple-background-illustration-3d-rendering_598821-35.avif')}
       style={styles.container}
     >
       <View style={styles.titleContainer}>
