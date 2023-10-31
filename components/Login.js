@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import firebaseApp from '../firebaseConfig';
+import firebaseConfig from '../firebaseConfig'; 
 import { useNavigation } from '@react-navigation/native';
 
 export default function LoginScreen() {
@@ -19,13 +19,13 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const auth = getAuth(firebaseApp);
+      const auth = getAuth(); // Use getAuth without passing firebaseApp
       const emailToLowerCase = email.toLowerCase(); // Convert email to lowercase
       await signInWithEmailAndPassword(auth, emailToLowerCase, password);
 
       console.log('Attempting to log in with email:', emailToLowerCase);
 
-      const db = getFirestore(firebaseApp);
+      const db = getFirestore(); 
       const usersCollection = collection(db, 'users');
       const userQuery = query(usersCollection, where('email', '==', emailToLowerCase));
       const querySnapshot = await getDocs(userQuery);

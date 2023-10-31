@@ -1,6 +1,6 @@
 // WalletScreen.js
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Card } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function WalletScreen() {
@@ -18,6 +18,10 @@ export default function WalletScreen() {
     navigation.navigate('Profile'); // Navigate to the Profile screen
   };
 
+  const handleNavigateToAddCard = () => {
+    navigation.navigate('CardIssuerSelector'); // Navigate to the CardIssuerSelector screen
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -25,7 +29,7 @@ export default function WalletScreen() {
         {/* Add your reward balance content here */}
       </View>
       <View style={styles.centerContainer}>
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={handleNavigateToAddCard}>
           <Text>Add Card</Text>
         </TouchableOpacity>
       </View>
